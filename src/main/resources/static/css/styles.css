@@ -1,0 +1,276 @@
+:root {
+  --ink: #17202a;
+  --muted: #667085;
+  --paper: #f4f6f8;
+  --panel: #ffffff;
+  --line: #dde3e8;
+  --green: #087a5a;
+  --green-dark: #075d46;
+  --amber: #d97706;
+  --red: #b42318;
+  --blue: #2563eb;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, "Times New Roman", serif; }
+button, input, select, textarea { font: inherit; }
+
+.app-shell { min-height: 100vh; display: grid; grid-template-columns: 238px minmax(0, 1fr); }
+.sidebar { background: #18332a; color: #fff; padding: 20px 14px; position: fixed; width: 238px; height: 100vh; display: flex; flex-direction: column; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.brand-mark { width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.35); display:grid; place-items:center; }
+.brand strong { display:block; font-family: "Trebuchet MS", sans-serif; font-size:15px; }
+.brand small { opacity:.7; }
+.nav-list { display:grid; gap:4px; margin-top:18px; }
+.nav-button { width:100%; height:42px; border:0; background:transparent; color:#dbe8e2; display:flex; align-items:center; gap:10px; padding:0 12px; border-radius:6px; cursor:pointer; text-align:left; }
+.nav-button svg { width:18px; }
+.nav-button.active, .nav-button:hover { background:rgba(255,255,255,.11); color:#fff; }
+.sidebar-footer { margin-top:auto; border-top:1px solid rgba(255,255,255,.12); padding:14px 8px 0; }
+
+.main { grid-column:2; min-width:0; }
+.topbar { height:68px; background:var(--panel); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 28px; position:sticky; top:0; z-index:10; }
+.topbar h1 { margin:0; font-size:22px; font-family:"Trebuchet MS",sans-serif; }
+.user-menu { display:flex; align-items:center; gap:10px; font-family:"Trebuchet MS",sans-serif; }
+.user-avatar { width:34px;height:34px;border-radius:50%;background:#dce9e4;color:var(--green-dark);display:grid;place-items:center;font-weight:700; }
+.content { padding:24px 28px 40px; max-width:1500px; margin:auto; }
+.view { display:none; }.view.active { display:block; }
+
+.metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+.metric { background:var(--panel); border:1px solid var(--line); border-radius:8px; min-height:118px; padding:16px; display:flex; justify-content:space-between; }
+.metric-label { color:var(--muted); font-family:"Trebuchet MS",sans-serif; font-size:13px; }
+.metric-value { font-size:32px; margin-top:12px; font-family:"Trebuchet MS",sans-serif; }
+.metric-icon { width:38px;height:38px;border-radius:8px;background:#edf5f1;color:var(--green);display:grid;place-items:center; }
+.metric-icon svg { width:20px; }
+
+.grid { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(280px,.8fr); gap:14px; }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.panel-header { min-height:52px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:12px 16px; }
+.panel-header h2 { margin:0; font-size:16px; font-family:"Trebuchet MS",sans-serif; }
+.panel-body { padding:16px; }
+.chart-wrap { height:270px; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-family:"Trebuchet MS",sans-serif; font-size:13px; }
+th,td { text-align:left; padding:11px 12px; border-bottom:1px solid var(--line); white-space:nowrap; }
+th { color:var(--muted); font-size:12px; }
+.status { display:inline-flex; align-items:center; border-radius:999px; padding:4px 8px; font-size:11px; background:#eef2f5; }
+.status.pendiente { background:#fff4cc; color:#7a5200; }.status.parcial { background:#dbeafe; color:#1d4ed8; }.status.atendido { background:#dff4ea; color:#087a5a; }
+
+.toolbar { display:flex; gap:8px; align-items:center; }
+.btn { border:1px solid var(--line); background:#fff; height:38px; border-radius:6px; padding:0 12px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; font-family:"Trebuchet MS",sans-serif; font-size:13px; }
+.btn-primary { border-color:var(--green); background:var(--green); color:#fff; }.btn-danger { border-color:#f0cbc7;background:#fff;color:var(--red); }
+.btn svg { width:16px; }
+
+.form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.field { display:grid; gap:6px; font-family:"Trebuchet MS",sans-serif; font-size:12px; }
+.field.full { grid-column:1/-1; }
+.field input,.field select,.field textarea { width:100%; border:1px solid var(--line); border-radius:6px; background:#fff; min-height:40px; padding:8px 10px; }
+.field textarea { min-height:72px; resize:vertical; }
+
+.document-sheet { margin-top:16px; background:#fff; border:1px solid #cbd4d8; border-top:4px solid var(--green); padding:22px; box-shadow:0 3px 14px rgba(23,32,42,.06); }
+.document-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding-bottom:16px; border-bottom:2px solid var(--ink); }
+.document-heading h2 { margin:2px 0 0; font:600 22px "Trebuchet MS",sans-serif; }
+.document-kicker { margin:0; color:var(--green-dark); text-transform:uppercase; font:700 11px "Trebuchet MS",sans-serif; }
+.document-number { min-width:190px; text-align:right; font-family:"Trebuchet MS",sans-serif; }
+.document-number span { display:block; color:var(--muted); font-size:10px; font-weight:700; }
+.document-number strong { display:block; margin-top:5px; font-size:14px; }
+.document-meta { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:11px 14px; padding:16px 0; border-bottom:1px solid var(--line); }
+.document-meta .field input,.document-meta .field select { min-height:36px; }
+.product-picker { padding:16px 0 12px; }
+.picker-heading { display:flex; align-items:baseline; gap:12px; margin-bottom:10px; }
+.picker-heading h3 { margin:0; font:600 15px "Trebuchet MS",sans-serif; }
+.picker-heading span { color:var(--muted); font:12px "Trebuchet MS",sans-serif; }
+.picker-controls { display:grid; grid-template-columns:minmax(150px,1.3fr) minmax(150px,1fr) minmax(170px,1.4fr) 92px 145px auto; gap:9px; align-items:end; }
+.picker-controls .field { min-width:0; }
+.picker-controls .field input,.picker-controls .field select { min-height:38px; }
+.unit-field input { text-align:center; font-weight:700; }
+.add-product { white-space:nowrap; }
+.sheet-table-wrap { max-height:min(52vh,560px); overflow:auto; border:1px solid #aeb9be; }
+.requisition-table { border-collapse:separate; border-spacing:0; min-width:760px; font-size:12px; }
+.requisition-table th,.requisition-table td { border-right:1px solid #c4cdd1; border-bottom:1px solid #c4cdd1; padding:8px 10px; white-space:normal; }
+.requisition-table thead th { position:sticky; top:0; z-index:2; background:#e9efed; color:#26352f; text-align:center; font-size:10px; line-height:1.3; }
+.requisition-table tbody tr:last-child td,.requisition-table tbody tr:last-child th { border-bottom:0; }
+.requisition-table tr > :last-child { border-right:0; }
+.requisition-table .category-cell { width:150px; min-width:120px; background:#f0f4f2; color:var(--green-dark); text-align:left; text-transform:uppercase; vertical-align:top; font-size:11px; }
+.requisition-table .product-name-cell { min-width:230px; }
+.requisition-table .line-quantity,.requisition-table .dispatch-quantity { width:112px; min-height:34px; border:1px solid #cbd4d8; border-radius:4px; padding:5px 7px; text-align:right; }
+.dispatch-empty { min-width:110px; height:36px; }
+.empty-row td { color:var(--muted); text-align:center; padding:22px; }
+.icon-button { float:right; border:0; background:transparent; color:var(--red); display:grid; place-items:center; width:30px; height:30px; border-radius:4px; cursor:pointer; }
+.icon-button:hover { background:#fff1ef; }
+.icon-button svg { width:15px; }
+.notes-field { margin-top:14px; }
+.notes-field textarea { min-height:54px; }
+.sheet-actions { justify-content:flex-end; padding-top:14px; }
+.dispatch-sheet { margin-top:16px; }
+.dispatch-meta { display:flex; flex-wrap:wrap; gap:8px 24px; padding:14px 0; font:13px "Trebuchet MS",sans-serif; }
+.dispatch-meta span { display:grid; gap:3px; }
+.dispatch-meta b { color:var(--muted); font-size:10px; text-transform:uppercase; }
+.dispatch-table { min-width:1050px; }
+.dispatch-table td { vertical-align:middle; }
+.dispatch-table .dispatch-quantity { border-color:#8fa89d; background:#f8fbf9; }
+.status.en_proceso { background:#e8eaff; color:#3e4394; }
+.requirements-status-note { color:var(--muted); font:12px "Trebuchet MS",sans-serif; }
+
+.login-screen { min-height:100vh; display:grid; place-items:center; background:#eaf0ed; }
+.login-card { width:min(390px,calc(100vw - 32px)); background:#fff; border:1px solid var(--line); border-radius:8px; padding:28px; box-shadow:0 16px 50px rgba(30,50,42,.12); }
+.login-brand { text-align:center; margin-bottom:22px; }.login-brand .brand-mark { margin:0 auto 10px;color:var(--green);width:46px;height:46px;border-color:#bdd0c7; }
+.login-card h1 { font-size:21px;margin:0 0 4px; }.login-card p { color:var(--muted);font-size:13px;margin:0; }
+.login-card .field { margin-top:14px; }.login-card .btn { width:100%;justify-content:center;margin-top:18px;height:42px; }
+.hidden { display:none !important; }
+.toast { position:fixed;right:20px;bottom:20px;background:#17202a;color:#fff;padding:12px 16px;border-radius:6px;font-family:"Trebuchet MS",sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:100; }
+
+@media (max-width:980px) {
+  .app-shell { grid-template-columns:76px minmax(0,1fr); }.sidebar{width:76px}.brand div,.nav-button span,.sidebar-footer span{display:none}.brand{justify-content:center}.nav-button{justify-content:center}.main{grid-column:2}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}
+  .document-meta { grid-template-columns:repeat(2,minmax(0,1fr)); }.picker-controls { grid-template-columns:repeat(3,minmax(0,1fr)); }.add-product { align-self:end; }
+}
+@media (max-width:620px) {
+  .app-shell{display:block}.sidebar{position:fixed;width:100%;height:58px;bottom:0;top:auto;z-index:20;padding:6px 8px}.brand,.sidebar-footer{display:none}.nav-list{grid-template-columns:repeat(4,1fr);margin:0}.nav-button{height:46px}.main{width:100%;padding-bottom:58px}.topbar{height:58px;padding:0 14px}.topbar h1{font-size:18px}.content{padding:16px 12px}.metrics{grid-template-columns:1fr 1fr}.metric{min-height:100px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+  .document-sheet { padding:14px 10px; margin-left:-3px; margin-right:-3px; }.document-heading { align-items:flex-start; }.document-heading h2 { font-size:18px; }.document-number { min-width:120px; }.document-number strong { font-size:11px; }
+  .document-meta { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }.document-meta .field { min-width:0; }.document-meta .field input,.document-meta .field select { padding:7px; font-size:12px; }
+  .picker-heading { display:block; }.picker-heading span { display:block; margin-top:4px; }.picker-controls { grid-template-columns:1fr 1fr; }.picker-controls .field:first-child,.picker-controls .field:nth-child(3) { grid-column:span 2; }.add-product { width:100%; justify-content:center; }
+  .sheet-table-wrap { max-height:52vh; }.requisition-table { min-width:700px; }.dispatch-table { min-width:1050px; }.sheet-actions { justify-content:stretch; flex-wrap:wrap; }.sheet-actions .btn { flex:1; justify-content:center; }
+}
+
+
+/* ========================================
+   INVENTARIO POR ALMACENES
+======================================== */
+
+.warehouse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.warehouse-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.warehouse-card:hover {
+  border-color: #9bbcaf;
+  box-shadow: 0 5px 16px rgba(23, 32, 42, .07);
+}
+
+.warehouse-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.warehouse-card-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: var(--green);
+  background: #edf5f1;
+  border-radius: 8px;
+}
+
+.warehouse-card-icon svg {
+  width: 22px;
+}
+
+.warehouse-card h3 {
+  margin: 2px 0 0;
+  font: 600 15px "Trebuchet MS", sans-serif;
+}
+
+.warehouse-card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.warehouse-stat {
+  padding: 11px;
+  background: #f7f9f8;
+  border-radius: 6px;
+}
+
+.warehouse-stat span {
+  display: block;
+  color: var(--muted);
+  font: 11px "Trebuchet MS", sans-serif;
+}
+
+.warehouse-stat strong {
+  display: block;
+  margin-top: 5px;
+  font: 700 23px "Trebuchet MS", sans-serif;
+}
+
+.warehouse-stat.warning strong {
+  color: var(--red);
+}
+
+.warehouse-card .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.warehouse-card .btn:hover {
+  border-color: var(--green);
+  color: var(--green-dark);
+}
+
+.inventory-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.inventory-summary-item {
+  flex: 1;
+  min-width: 150px;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f8faf9;
+}
+
+.inventory-summary-item span {
+  display: block;
+  color: var(--muted);
+  font: 12px "Trebuchet MS", sans-serif;
+}
+
+.inventory-summary-item strong {
+  display: block;
+  margin-top: 6px;
+  font: 700 22px "Trebuchet MS", sans-serif;
+}
+
+.inventory-empty {
+  grid-column: 1 / -1;
+  padding: 30px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  font: 13px "Trebuchet MS", sans-serif;
+}
+
+@media (max-width: 620px) {
+  .warehouse-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-summary-item {
+    min-width: calc(50% - 10px);
+  }
+
+  #warehouseInventoryDetail .panel-header {
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}

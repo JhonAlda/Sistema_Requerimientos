@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestión de Almacén</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <section id="loginScreen" class="login-screen">
+    <form id="loginForm" class="login-card">
+      <div class="login-brand"><div class="brand-mark"><i data-lucide="warehouse"></i></div><h1>Gestión de Almacén</h1><p>Acceso al sistema</p></div>
+      <label class="field">Usuario<input id="username" name="username" autocomplete="username" required></label>
+      <label class="field">Contraseña<input id="password" name="password" type="password" autocomplete="current-password" required></label>
+      <button class="btn btn-primary" type="submit"><i data-lucide="log-in"></i>Ingresar</button>
+    </form>
+  </section>
+
+  <div id="app" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark"><i data-lucide="warehouse"></i></div><div><strong>Gestión de Almacén</strong><small>Operaciones</small></div></div>
+      <nav class="nav-list">
+        <button class="nav-button active" data-view="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
+        <button class="nav-button" data-view="requerimientos"><i data-lucide="clipboard-list"></i><span>Requerimientos</span></button>
+        <button class="nav-button" data-view="despachos"><i data-lucide="package-check"></i><span>Despachos</span></button>
+        <button class="nav-button" data-view="inventario"><i data-lucide="boxes"></i><span>Inventario</span></button>
+      </nav>
+      <div class="sidebar-footer"><button id="logoutButton" class="nav-button"><i data-lucide="log-out"></i><span>Cerrar sesión</span></button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><h1 id="pageTitle">Dashboard</h1><div class="user-menu"><span id="userName">Usuario</span><div class="user-avatar" id="userInitial">U</div></div></header>
+      <div class="content">
+        <section id="dashboardView" class="view active">
+          <div class="metrics">
+            <article class="metric"><div><div class="metric-label">Pendientes</div><div id="pendingMetric" class="metric-value">0</div></div><div class="metric-icon"><i data-lucide="clock-3"></i></div></article>
+            <article class="metric"><div><div class="metric-label">Parciales</div><div id="partialMetric" class="metric-value">0</div></div><div class="metric-icon"><i data-lucide="circle-dashed"></i></div></article>
+            <article class="metric"><div><div class="metric-label">Despachos activos</div><div id="dispatchMetric" class="metric-value">0</div></div><div class="metric-icon"><i data-lucide="truck"></i></div></article>
+            <article class="metric"><div><div class="metric-label">Stock bajo</div><div id="stockMetric" class="metric-value">0</div></div><div class="metric-icon"><i data-lucide="triangle-alert"></i></div></article>
+          </div>
+          <div class="grid">
+            <article class="panel"><div class="panel-header"><h2>Consumo por área</h2></div><div class="panel-body"><div class="chart-wrap"><canvas id="areaChart"></canvas></div></div></article>
+            <article class="panel"><div class="panel-header"><h2>Productos solicitados</h2></div><div class="panel-body"><div class="chart-wrap"><canvas id="productChart"></canvas></div></div></article>
+          </div>
+        </section>
+
+        <section id="requerimientosView" class="view">
+          <article class="panel"><div class="panel-header"><h2>Requerimientos recientes</h2><button id="newRequirementButton" class="btn btn-primary"><i data-lucide="plus"></i>Nuevo requerimiento</button></div><div class="panel-body table-wrap"><table><thead><tr><th>Número</th><th>Área</th><th>Almacén</th><th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody id="requirementsBody"></tbody></table></div></article>
+          <article id="requirementForm" class="document-sheet hidden">
+            <header class="document-heading">
+              <div><p class="document-kicker">Solicitud interna de almacén</p><h2>Requerimiento de productos</h2></div>
+              <div class="document-number"><span>NÚMERO</span><strong id="requirementNumber">Se asigna al registrar</strong></div>
+            </header>
+            <div class="document-meta">
+              <label class="field">Empresa<input id="companyName" value="No configurada" readonly></label>
+              <label class="field">Sede / almacén destino<select id="warehouseSelect" required></select></label>
+              <label class="field">Área solicitante<select id="areaSelect" required></select></label>
+              <label class="field">Turno<input id="shiftDisplay" readonly value="Según área"></label>
+              <label class="field">Responsable de la solicitud<input id="areaResponsible" readonly></label>
+              <label class="field">Fecha del requerimiento<input id="requestDate" type="date" readonly></label>
+              <label class="field">Hora<input id="requestTime" type="time" readonly></label>
+              <label class="field">Registrado por<input id="requestUser" readonly></label>
+            </div>
+            <form id="createRequirementForm">
+              <div class="product-picker">
+                <div class="picker-heading"><h3>Agregar productos</h3><span>Selecciona los productos y cantidades que incluye esta solicitud.</span></div>
+                <div class="picker-controls">
+                  <label class="field">Buscar producto<input id="productSearch" type="search" placeholder="Nombre del producto"></label>
+                  <label class="field">Categoría<select id="categoryFilter"></select></label>
+                  <label class="field">Producto<select id="requirementProduct" required></select></label>
+                  <label class="field unit-field">Unidad<input id="productUnit" readonly></label>
+                  <label class="field quantity-field">Cantidad solicitada<input id="requirementQuantity" type="number" min="0.001" step="0.001" ></label>
+                  <button id="addRequirementProduct" class="btn btn-primary add-product" type="button"><i data-lucide="plus"></i>Agregar</button>
+                </div>
+              </div>
+              <div class="sheet-table-wrap">
+                <table class="requisition-table"><thead><tr><th>CATEGORÍA</th><th>DESCRIPCIÓN DEL PRODUCTO</th><th>UNIDAD DE MEDIDA</th><th>CANTIDAD DE PEDIDO</th><th>CANTIDAD DE DESPACHO</th></tr></thead><tbody id="requirementLines"><tr class="empty-row"><td colspan="5">Agrega productos para completar la hoja.</td></tr></tbody></table>
+              </div>
+              <label class="field notes-field">Observaciones<textarea id="requirementObservation" maxlength="1000"></textarea></label>
+              <div class="toolbar sheet-actions"><button class="btn btn-primary" type="submit"><i data-lucide="save"></i>Registrar requerimiento</button><button id="cancelRequirement" class="btn" type="button"><i data-lucide="x"></i>Cancelar</button></div>
+            </form>
+          </article>
+        </section>
+
+        <section id="despachosView" class="view">
+          <article class="panel"><div class="panel-header"><h2>Despachos pendientes</h2><button id="refreshDispatches" class="btn" type="button"><i data-lucide="refresh-cw"></i>Actualizar</button></div><div class="panel-body table-wrap"><table><thead><tr><th>Requerimiento</th><th>Área</th><th>Almacén</th><th>Fecha</th><th>Estado</th><th></th></tr></thead><tbody id="dispatchesBody"></tbody></table></div></article>
+          <article id="dispatchDetail" class="document-sheet hidden dispatch-sheet">
+            <header class="document-heading"><div><p class="document-kicker">Salida de almacén</p><h2 id="dispatchTitle">Detalle del despacho</h2></div><div class="document-number"><span>ESTADO</span><strong id="dispatchState">En proceso</strong></div></header>
+            <div id="dispatchMeta" class="dispatch-meta"></div>
+            <div class="sheet-table-wrap"><table class="requisition-table dispatch-table"><thead><tr><th>CATEGORÍA</th><th>PRODUCTO</th><th>UNIDAD</th><th>PEDIDO</th><th>ENTREGADO ANTES</th><th>PENDIENTE</th><th>STOCK</th><th>ENTREGA ACTUAL</th></tr></thead><tbody id="dispatchLines"></tbody></table></div>
+            <div class="toolbar sheet-actions"><button id="confirmDispatch" class="btn btn-primary" type="button"><i data-lucide="package-check"></i>Confirmar entrega</button><button id="cancelDispatch" class="btn" type="button"><i data-lucide="arrow-left"></i>Volver a pendientes</button></div>
+          </article>
+        </section>
+
+        <section id="inventarioView" class="view">
+
+  <div id="inventoryWarehousesView">
+    <article class="panel">
+      <div class="panel-header">
+        <h2>Almacenes registrados</h2>
+        <button id="refreshInventory" class="btn" type="button">
+          <i data-lucide="refresh-cw"></i>
+          Actualizar
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <div id="warehouseCards" class="warehouse-grid"></div>
+      </div>
+    </article>
+  </div>
+
+  <div id="warehouseInventoryDetail" class="hidden">
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <h2 id="inventoryWarehouseTitle">Inventario del almacén</h2>
+          <p id="inventoryWarehouseDescription"></p>
+        </div>
+
+        <button id="backToWarehouses" class="btn" type="button">
+          <i data-lucide="arrow-left"></i>
+          Volver a almacenes
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <div id="warehouseInventorySummary" class="inventory-summary"></div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Unidad</th>
+                <th>Existencia</th>
+                <th>Stock mínimo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="warehouseInventoryBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </article>
+  </div>
+
+</section>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/js/notification-service.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
