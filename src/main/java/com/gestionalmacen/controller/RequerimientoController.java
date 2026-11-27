@@ -1,6 +1,7 @@
 package com.gestionalmacen.controller;
 
 import com.gestionalmacen.dto.request.RequerimientoRequest;
+import com.gestionalmacen.dto.response.AreaResponse;
 import com.gestionalmacen.dto.response.RequerimientoResponse;
 import com.gestionalmacen.service.interfaces.RequerimientoService;
 import jakarta.validation.Valid;
@@ -49,5 +50,9 @@ public class RequerimientoController {
     @GetMapping("/area/{areaId}")
     public ResponseEntity<List<RequerimientoResponse>> porArea(@PathVariable Long areaId) {
         return ResponseEntity.ok(service.listarPorArea(areaId));
+    }
+    @GetMapping("/areas-permitidas")
+    public ResponseEntity<List<AreaResponse>> areasPermitidas() {
+        return ResponseEntity.ok(service.listarAreasPermitidas());
     }
 }

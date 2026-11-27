@@ -146,17 +146,55 @@ async function loadDashboard() {
 
 async function loadCatalogs() {
   const [areas, warehouses, products] = await Promise.all([
-    api('/api/areas'), api('/api/almacenes'), api('/api/productos?size=500&sort=nombre,asc')
+    api('/api/requerimientos/areas-permitidas'), api('/api/almacenes'), api('/api/productos?size=500&sort=nombre,asc')
   ]);
   areasCatalog = getCollection(areas);
   warehousesCatalog = getCollection(warehouses);
   productsCatalog = getCollection(products);
   fillSelect('areaSelect', [['', 'Selecciona un área'], ...areasCatalog.map(area => [area.id, area.nombre])]);
+  if (areasCatalog.length === 1) document.getElementById('areaSelect').value = areasCatalog[0].id;
+  if (!areasCatalog.length) NotificationService.warning('Tu usuario no tiene áreas asignadas. Contacta al administrador.');
   fillSelect('warehouseSelect', [['', 'Selecciona un almacén'], ...warehousesCatalog.map(warehouse => [warehouse.id, warehouse.nombre])]);
   const categories = [...new Set(productsCatalog.map(product => product.categoria))].sort((a, b) => a.localeCompare(b, 'es'));
   fillSelect('categoryFilter', [['', 'Todas las categorías'], ...categories.map(category => [category, category])]);
   renderProductOptions();
   updateRequestHeader();
+}
+
+function renderAssignedAreas() {
+  const el = document.getElementById('assignedAreas');
+  if (!el) return;
+  if (currentUser?.rol === 'SOLICITANTE') {
+    const names = areasCatalog.map(area => area.nombre).join(', ');
+    el.textContent = `${areasCatalog.length > 1 ? 'Áreas asignadas' : 'Área asignada'}: ${names || 'ninguna'}`;
+  } else {
+    el.textContent = 'Áreas: todas';
+  }
+}
+
+async function showRequirementDetail(id) {
+  const requirement = await api(`/api/requerimientos/${id}`);
+  const rows = requirement.detalles.map(detail => `
+    <tr>
+      <td style="text-align:left">${escapeHtml(detail.producto)}</td>
+      <td>${escapeHtml(detail.unidad)}</td>
+      <td>${formatQuantity(detail.cantidadSolicitada)}</td>
+      <td>${formatQuantity(detail.cantidadDespachada)}</td>
+      <td>${formatQuantity(detail.cantidadPendiente)}</td>
+    </tr>`).join('');
+  const html = `
+    <p style="margin:0 0 12px;text-align:left">
+      <b>Área:</b> ${escapeHtml(requirement.area)} · <b>Almacén:</b> ${escapeHtml(requirement.almacen)} · <b>Estado:</b> ${escapeHtml(requirement.estado)}
+    </p>
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <thead><tr><th style="text-align:left">Producto</th><th>Unidad</th><th>Pedido</th><th>Entregado</th><th>Pendiente</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  if (window.Swal) {
+    await Swal.fire({ title: `Requerimiento ${requirement.numero}`, html, width: 720, confirmButtonText: 'Cerrar' });
+  } else {
+    await NotificationService.info(`${requirement.numero}: ${requirement.detalles.length} producto(s)`);
+  }
 }
 
 async function loadRequirements() {
@@ -166,11 +204,17 @@ async function loadRequirements() {
     <td><span class="status ${escapeHtml(requirement.estado.toLowerCase())}">${escapeHtml(requirement.estado)}</span></td>
     <td>${new Date(requirement.fechaSolicitud).toLocaleString('es-PE')}</td><td><button class="btn" data-open-dispatch="${requirement.id}">Ver detalle</button></td></tr>`).join('')
     || '<tr><td colspan="6">No hay requerimientos abiertos</td></tr>';
-    document.querySelectorAll('[data-open-dispatch]').forEach(button => button.addEventListener('click', async () => {
-      showView('despachos');
-      await openDispatch(Number(button.dataset.openDispatch));
-    }));
+  document.querySelectorAll('[data-open-dispatch]').forEach(button => button.addEventListener('click', async () => {
+    const id = Number(button.dataset.openDispatch);
+    if (currentUser?.rol === 'SOLICITANTE') {
+      try { await showRequirementDetail(id); } catch (error) { await notifyError(error); }
+      return;
+    }
+    showView('despachos');
+    await openDispatch(id);
+  }));
   await loadCatalogs();
+  renderAssignedAreas();
 }
 
 function showView(name) {
@@ -188,13 +232,9 @@ async function loadWarehouseProducts(warehouseId) {
   }
 
   try {
-    const inventory = await api(`/api/inventario/almacen/${warehouseId}`);
+    const ids = await api(`/api/almacenes/${warehouseId}/productos`);
 
-    warehouseProductIds = [
-      ...new Set(inventory.map(item => Number(item.productoId)))
-    ];
-
-    console.log('Productos del almacén:', warehouseProductIds);
+    warehouseProductIds = [...new Set(ids.map(Number))];
 
     const warehouseProducts = productsCatalog.filter(product =>
       product.activo &&
@@ -268,7 +308,6 @@ function updateRequestHeader() {
   document.getElementById('requestUser').value = currentUser?.username || '';
   const now = new Date();
   document.getElementById('requestDate').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  document.getElementById('requestTime').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 }
 
 function renderRequirementCart() {

@@ -17,4 +17,7 @@ public interface InventarioRepository extends JpaRepository<Inventario, Long> {
     @Query("SELECT i FROM Inventario i WHERE i.almacen.id = :almacenId AND i.producto.id = :productoId")
     Optional<Inventario> findLockedByAlmacenIdAndProductoId(@Param("almacenId") Long almacenId,
                                                            @Param("productoId") Long productoId);
+                                                           
+    @Query("SELECT i.producto.id FROM Inventario i WHERE i.almacen.id = :almacenId")
+    List<Long> findProductoIdsByAlmacenId(@Param("almacenId") Long almacenId);
 }

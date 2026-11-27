@@ -1,6 +1,7 @@
 package com.gestionalmacen.service.impl;
 
 import com.gestionalmacen.dto.request.RequerimientoRequest;
+import com.gestionalmacen.dto.response.AreaResponse;
 import com.gestionalmacen.dto.response.DetalleRequerimientoResponse;
 import com.gestionalmacen.dto.response.RequerimientoResponse;
 import com.gestionalmacen.entity.*;
@@ -186,4 +187,17 @@ public class RequerimientoServiceImpl implements RequerimientoService {
             r.getAlmacen().getId(), r.getAlmacen().getNombre(), r.getSolicitante().getId(), r.getSolicitante().getNombres(),
             r.getEstado().getNombre().name(), r.getFechaSolicitud(), r.getObservaciones(), detalles);
     }
+
+    @Override @Transactional(readOnly = true)
+public List<AreaResponse> listarAreasPermitidas() {
+    Usuario usuario = usuarioActual();
+    List<Area> areas = usuario.getRol().getNombre() == com.gestionalmacen.enums.NombreRol.SOLICITANTE
+        ? usuarioAreaRepository.findByUsuarioId(usuario.getId()).stream().map(UsuarioArea::getArea).toList()
+        : areaRepository.findAll();
+    return areas.stream()
+        .filter(a -> Boolean.TRUE.equals(a.getActiva()))
+        .map(a -> new AreaResponse(a.getId(), a.getSede().getId(), a.getSede().getNombre(),
+                                   a.getNombre(), a.getActiva()))
+        .toList();
+}
 }

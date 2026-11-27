@@ -48,6 +48,7 @@
         </section>
 
         <section id="requerimientosView" class="view">
+          <p id="assignedAreas" style="margin:0 0 12px;color:#475569;font-weight:600"></p>
           <article class="panel"><div class="panel-header"><h2>Requerimientos recientes</h2><button id="newRequirementButton" class="btn btn-primary"><i data-lucide="plus"></i>Nuevo requerimiento</button></div><div class="panel-body table-wrap"><table><thead><tr><th>Número</th><th>Área</th><th>Almacén</th><th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody id="requirementsBody"></tbody></table></div></article>
           <article id="requirementForm" class="document-sheet hidden">
             <header class="document-heading">
@@ -55,13 +56,12 @@
               <div class="document-number"><span>NÚMERO</span><strong id="requirementNumber">Se asigna al registrar</strong></div>
             </header>
             <div class="document-meta">
-              <label class="field">Empresa<input id="companyName" value="No configurada" readonly></label>
+              <label class="field">Empresa<input id="companyName" value="Restaurante LovelY" readonly></label>
               <label class="field">Sede / almacén destino<select id="warehouseSelect" required></select></label>
               <label class="field">Área solicitante<select id="areaSelect" required></select></label>
               <label class="field">Turno<input id="shiftDisplay" readonly value="Según área"></label>
               <label class="field">Responsable de la solicitud<input id="areaResponsible" readonly></label>
               <label class="field">Fecha del requerimiento<input id="requestDate" type="date" readonly></label>
-              <label class="field">Hora<input id="requestTime" type="time" readonly></label>
               <label class="field">Registrado por<input id="requestUser" readonly></label>
             </div>
             <form id="createRequirementForm">
